@@ -25,7 +25,7 @@ log = PowerDataLogger(name="PowerDataApplicationMain", level=log_level)
 window_size_in_minutes = 5
 processor = PowerDataProcessor(
     window_size_in_minutes=window_size_in_minutes, 
-    averaging_column="Solar",
+    averaging_column="SolarPower",
     log_level=log_level
 )
 fetcher = PowerDataFetcher(
