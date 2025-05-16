@@ -12,14 +12,14 @@ class PowerDataFetcher:
         self.ENDPOINT_URL = endpoint_url
         self.log = PowerDataLogger(__class__.__name__, level=log_level)
 
-    def fetch_data(self, window_size_in_minutes: int) -> list[MeasurementRecord]:
+    def fetch_data(self, window_size_in_minutes: int, limit: int) -> list[MeasurementRecord]:
         now = datetime.now(tz=timezone.utc)
         start = now - timedelta(minutes=window_size_in_minutes)
         tz = "UTC"
-        params = {"timezone": tz, "start": start.strftime("%Y-%m-%dT%H:%M")}
+        params = {"timezone": tz, "start": start.strftime("%Y-%m-%dT%H:%M"), "limit": limit}
         try:
             res = requests.get(self.ENDPOINT_URL, params=params)
-            self.log.debug("Requesting data from %s (timezone: %s)", start, tz)
+            self.log.debug("Requesting data from %s (timezone: %s): %s measurement(s)", start, tz, limit)
             res.raise_for_status()
             if res.status_code == 200:
                 records = res.json().get("records", [])

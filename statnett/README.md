@@ -33,15 +33,17 @@ There are multiple ways to do this, all depending on the use case. My understand
 * Simple exception handling is added, but I do not check all cases and be granular on HTTP response codes. 
 * If we work with very high-resolution data, caching the window is a memory and processing cost (what I chose to do for now). In this case, having a cumulative sum/running average might reduce the memory footprint.
 * I have only selected 1 field, but storing all data so its easier to work with during the interview. The code should be dynamic enough to average on other fields, or add changes to average multiple fields or have multiple sliding window averages.
-* To begin with, I just fetch all data every minute. I am fully aware of the fact that the same data is fetched over and over with the current code, and the more optimal solution would be to fetch the latest data point, and append it to the queue. However, because we still do a request over the internet, and the scale is minimal, there is not much more to optimize. But for really large interactions, the ideal situation is just fetching (or injecting) from
-upstream processors, the latest measurement.
+* I fetch the latest measurement instead of refetching all data. In the code there is a sorted insert to ensure the oldest sample is removed. I know this sort might be inefficient but have not bothered much about it, and there are other ways of keeping samples ordered.
 
 ## Notations
 * https://api.energidataservice.dk/dataset/PowerSystemRightNow?start=now-PT5M&timezone=UTC, specifying timezone does not return any results, they probably use local time for "now", and does not normalize it down to UTC
 when using 'now'.
 
 ## Future work
-* 
+* Deployment pipeline. Can be deployed as a running service or also serverless function on triggers (with some more tweaks to fit that setup)
+* Loose coupling might make it easier to deploy this as separate entities, e.g AWS Lambdas / Azure Functions etc, a separate fetcher and processor.
+* We can do orcestration if needed. The API endpoints are just there to illustrate how an application potentially could use this, fetching average and then a
+separate endpoint for model inference. Orchestrated workflows allows for failing the whole pipe and making this process more transactional.
 
 ## Running the application
 I use [PDM](https://pdm-project.org/en/latest/#installation) to manage dependencies and have a pyproject.toml

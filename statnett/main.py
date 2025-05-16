@@ -52,6 +52,7 @@ def get_ml_model_prediction():
 # Polling function
 def poll_data():
     while True:
-        data = fetcher.fetch_data(window_size_in_minutes=window_size_in_minutes)
+        limit = 5 if not processor.current_average else 1
+        data = fetcher.fetch_data(window_size_in_minutes=window_size_in_minutes, limit=limit)
         processor.update_moving_average(data)
         time.sleep(60)

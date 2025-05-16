@@ -24,7 +24,7 @@ class PowerDataProcessor:
             self.log.debug(
                 "Updating moving average window for '%s'", self.averaging_column
             )
-            self.window.extend(data)
+            self.window.extend(sorted(data, key=lambda x: x.Minutes1UTC))
             self.current_average = mean(
                 [getattr(record, self.averaging_column) for record in self.window]
             )
